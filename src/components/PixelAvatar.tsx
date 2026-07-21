@@ -18,7 +18,14 @@ export function PixelAvatar({ seed, tema = 'aleatorio', codigoPixel, tamano = 40
       const [codigo, leyenda] = codigoPixel.split('|')
       if (codigo) return pixelArtDesdeCodigo(codigo, leyenda ?? '')
     }
-    return pixelAvatar(seed || 'SmartPath', tema)
+    // la semilla puede venir como "tema:nombre" (elegido por el estudiante)
+    const s = seed || 'SmartPath'
+    const idx = s.indexOf(':')
+    const posibleTema = idx > 0 ? s.slice(0, idx) : ''
+    if (['aleatorio', 'criatura', 'flor', 'abeja', 'mariposa'].includes(posibleTema)) {
+      return pixelAvatar(s.slice(idx + 1), posibleTema as TemaAvatar)
+    }
+    return pixelAvatar(s, tema)
   }, [seed, tema, codigoPixel])
 
   return (

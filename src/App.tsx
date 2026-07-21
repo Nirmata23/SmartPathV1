@@ -7,9 +7,18 @@ import { RegistroPage } from './app/publico/RegistroPage'
 import { CodigoPage } from './app/publico/CodigoPage'
 import { AppLayout } from './app/AppLayout'
 import { DirectorHome } from './app/director/DirectorHome'
+import { ColegioPage } from './app/director/ColegioPage'
+import { PersonasPage } from './app/director/PersonasPage'
+import { AcademicoPage } from './app/director/AcademicoPage'
 import { DocenteHome } from './app/docente/DocenteHome'
+import { AsistenciaPage } from './app/docente/AsistenciaPage'
+import { CalificacionesPage } from './app/docente/CalificacionesPage'
 import { PadreHome } from './app/padre/PadreHome'
+import { NotasPage } from './app/padre/NotasPage'
+import { AsistenciaHijosPage } from './app/padre/AsistenciaHijosPage'
 import { EstudianteHome } from './app/estudiante/EstudianteHome'
+import { TareasPage } from './app/estudiante/TareasPage'
+import { AvatarPage } from './app/estudiante/AvatarPage'
 
 function PantallaCarga() {
   return (
@@ -41,17 +50,6 @@ function RequiereRol({ rol, children }: { rol: Rol; children: ReactNode }) {
   return <AppLayout>{children}</AppLayout>
 }
 
-function EnConstruccion({ nombre }: { nombre: string }) {
-  return (
-    <div className="rounded-2xl border border-borde bg-white p-10 text-center shadow-[0_2px_8px_rgba(12,11,9,.05)]">
-      <div className="font-display text-2xl">{nombre}</div>
-      <p className="mt-2 text-sm text-muted">
-        Esta sección llega en la siguiente fase del MVP.
-      </p>
-    </div>
-  )
-}
-
 export default function App() {
   return (
     <Routes>
@@ -61,21 +59,21 @@ export default function App() {
       <Route path="/codigo" element={<CodigoPage />} />
 
       <Route path="/director" element={<RequiereRol rol="director"><DirectorHome /></RequiereRol>} />
-      <Route path="/director/colegio" element={<RequiereRol rol="director"><EnConstruccion nombre="Colegio" /></RequiereRol>} />
-      <Route path="/director/personas" element={<RequiereRol rol="director"><EnConstruccion nombre="Personas" /></RequiereRol>} />
-      <Route path="/director/academico" element={<RequiereRol rol="director"><EnConstruccion nombre="Académico" /></RequiereRol>} />
+      <Route path="/director/colegio" element={<RequiereRol rol="director"><ColegioPage /></RequiereRol>} />
+      <Route path="/director/personas" element={<RequiereRol rol="director"><PersonasPage /></RequiereRol>} />
+      <Route path="/director/academico" element={<RequiereRol rol="director"><AcademicoPage /></RequiereRol>} />
 
       <Route path="/docente" element={<RequiereRol rol="docente"><DocenteHome /></RequiereRol>} />
-      <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><EnConstruccion nombre="Asistencia" /></RequiereRol>} />
-      <Route path="/docente/calificaciones" element={<RequiereRol rol="docente"><EnConstruccion nombre="Calificaciones" /></RequiereRol>} />
+      <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><AsistenciaPage /></RequiereRol>} />
+      <Route path="/docente/calificaciones" element={<RequiereRol rol="docente"><CalificacionesPage /></RequiereRol>} />
 
       <Route path="/padre" element={<RequiereRol rol="padre"><PadreHome /></RequiereRol>} />
-      <Route path="/padre/notas" element={<RequiereRol rol="padre"><EnConstruccion nombre="Notas" /></RequiereRol>} />
-      <Route path="/padre/asistencia" element={<RequiereRol rol="padre"><EnConstruccion nombre="Asistencia" /></RequiereRol>} />
+      <Route path="/padre/notas" element={<RequiereRol rol="padre"><NotasPage /></RequiereRol>} />
+      <Route path="/padre/asistencia" element={<RequiereRol rol="padre"><AsistenciaHijosPage /></RequiereRol>} />
 
       <Route path="/estudiante" element={<RequiereRol rol="estudiante"><EstudianteHome /></RequiereRol>} />
-      <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><EnConstruccion nombre="Tareas" /></RequiereRol>} />
-      <Route path="/estudiante/avatar" element={<RequiereRol rol="estudiante"><EnConstruccion nombre="Mi avatar" /></RequiereRol>} />
+      <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><TareasPage /></RequiereRol>} />
+      <Route path="/estudiante/avatar" element={<RequiereRol rol="estudiante"><AvatarPage /></RequiereRol>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

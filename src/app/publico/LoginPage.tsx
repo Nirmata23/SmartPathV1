@@ -11,10 +11,17 @@ import {
   claseInputOscuro,
 } from './AuthShell'
 
+// Los estudiantes entran con usuario + PIN (§21); internamente se traduce a un
+// correo sintético que ellos nunca ven.
+const DOMINIO_ESTUDIANTE = 'est.smartpath.app'
+
 export function LoginPage() {
   const nav = useNavigate()
+  const [modo, setModo] = useState<'correo' | 'estudiante'>('correo')
   const [correo, setCorreo] = useState('')
   const [clave, setClave] = useState('')
+  const [usuario, setUsuario] = useState('')
+  const [pin, setPin] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [cargando, setCargando] = useState(false)
 
@@ -22,12 +29,18 @@ export function LoginPage() {
     e.preventDefault()
     setError(null)
     setCargando(true)
-    const { error } = await supabase.auth.signInWithPassword({ email: correo, password: clave })
+    const credenciales =
+      modo === 'estudiante'
+        ? { email: `${usuario.trim().toLowerCase()}@${DOMINIO_ESTUDIANTE}`, password: pin.trim() }
+        : { email: correo, password: clave }
+    const { error } = await supabase.auth.signInWithPassword(credenciales)
     setCargando(false)
     if (error) {
       setError(
         error.message === 'Invalid login credentials'
-          ? 'Correo o contraseña incorrectos.'
+          ? modo === 'estudiante'
+            ? 'Usuario o PIN incorrectos. Pide a tu colegio que reinicie tu PIN si lo olvidaste.'
+            : 'Correo o contraseña incorrectos.'
           : 'No se pudo iniciar sesión. Intenta de nuevo.',
       )
       return
@@ -47,7 +60,60 @@ export function LoginPage() {
 
       <MensajeError texto={error} />
 
+      <div className="mb-4 flex gap-1.5 rounded-[13px] p-1" style={{ background: 'rgba(245,237,224,.06)' }}>
+        {(
+          [
+            ['correo', 'Con correo'],
+            ['estudiante', 'Soy estudiante'],
+          ] as const
+        ).map(([id, txt]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => { setModo(id); setError(null) }}
+            className="h-10 flex-1 rounded-[10px] text-[13px] font-bold transition-colors"
+            style={
+              modo === id
+                ? { background: 'rgba(245,237,224,.14)', color: '#faf8f4' }
+                : { color: 'rgba(245,237,224,.45)' }
+            }
+          >
+            {txt}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={entrar}>
+        {modo === 'estudiante' ? (
+          <>
+            <CampoOscuro etiqueta="Usuario (te lo dio tu colegio)">
+              <input
+                required
+                autoComplete="username"
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                placeholder="dbarrios0421"
+                className={`${claseInputOscuro} font-mono`}
+              />
+            </CampoOscuro>
+            <CampoOscuro etiqueta="PIN">
+              <input
+                type="password"
+                required
+                inputMode="numeric"
+                autoComplete="current-password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                placeholder="••••••"
+                className={`${claseInputOscuro} font-mono tracking-widest`}
+              />
+            </CampoOscuro>
+            <BotonPrimario cargando={cargando}>
+              Entrar <ArrowRight className="h-[17px] w-[17px]" />
+            </BotonPrimario>
+          </>
+        ) : (
+          <>
         <CampoOscuro etiqueta="Correo electrónico">
           <div className="relative">
             <Mail
@@ -105,6 +171,8 @@ export function LoginPage() {
         <BotonPrimario cargando={cargando}>
           Iniciar sesión <ArrowRight className="h-[17px] w-[17px]" />
         </BotonPrimario>
+          </>
+        )}
       </form>
 
       <div

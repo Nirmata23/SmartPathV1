@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+/* ── Tokens SmartPath (§40 de la especificación) ─────────────────────────── */
+@theme {
+  --color-cream: #faf8f4;
+  --color-cream-2: #f2ede5;
+  --color-cream-3: #e8e0d4;
+  --color-ink: #0b0a08;
+  --color-ink-2: #171310;
+  --color-muted: #6b6156;
+  --color-muted-2: #a09488;
+  --color-amber: #e07b00;
+  --color-amber-l: #f7a927;
+  --color-amber-d: #c96e00;
+  --color-borde: #e2dbd0;
+  --color-exito: #16a34a;
+  --color-alerta: #dc2626;
+  --color-aviso: #d97706;
+  --color-info: #2563eb;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-chip: 8px;
+  --radius-input: 12px;
+  --radius-card: 16px;
+  --radius-panel: 24px;
+}
+
+* {
+  min-width: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Animación de deriva del mosaico (login). Respeta reduced-motion. */
+@keyframes deriva {
+  from {
+    transform: scale(1.05) translate(0, 0);
+  }
+  to {
+    transform: scale(1.18) translate(-3%, 2%);
+  }
+}
+.deriva {
+  animation: deriva 26s ease-in-out infinite alternate;
+}
+.deriva-2 {
+  animation: deriva 32s ease-in-out infinite alternate-reverse;
+}
+@media (prefers-reduced-motion: reduce) {
+  .deriva,
+  .deriva-2 {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

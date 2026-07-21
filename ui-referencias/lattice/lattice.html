@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Lattice</title>
+<style>
+  :root{
+    --bg:#08080b;
+    --line: rgba(255,255,255,.10);
+    --dot: rgba(255,255,255,.10);
+    --ink:#ece9e2;
+    --ink-dim:#8d8a82;
+    --badge-bg: rgba(6,6,9,.82);
+
+    --tan:#cbb28c;
+    --tan-deep:#a68a5f;
+    --cream:#eee8da;
+    --white:#f4f1e8;
+
+    --pink:#ef8fc0;
+    --pink-deep:#d766a6;
+    --lav:#c6b3ea;
+
+    --teal:#83e6c4;
+    --scene-teal:#6ee7c8;
+    --scene-green:#8be27a;
+    --scene-blue:#7ab8f0;
+    --flt-pink:#ef7fc0;
+
+    --cloud-a:#f3c988;
+    --cloud-b:#f7e6ae;
+    --cloud-c:#7fb2e2;
+
+    --storm-a:#9a9fb0;
+    --storm-b:#e39a5c;
+    --storm-c:#3f4250;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; background:#000; color:var(--ink);
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body{
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding: 22px;
+  }
+
+  .stage{
+    width:100%;
+    max-width:1500px;
+  }
+
+  .lattice{
+    position:relative;
+    width:100%;
+    aspect-ratio: 1900 / 960;
+    background: var(--bg);
+    overflow:hidden;
+    border:1px solid var(--line);
+    font-size: clamp(7px, 0.95vw, 13px);
+    background-image:
+      radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+    background-size: 20px 20px;
+    background-position: -1px -1px;
+    animation: bgdrift 46s linear infinite;
+  }
+  @keyframes bgdrift{
+    from{ background-position: -1px -1px; }
+    to{ background-position: -21px -21px; }
+  }
+
+  .grid{
+    position:relative;
+    z-index:2;
+    width:100%; height:100%;
+    display:grid;
+    grid-template-columns: 1.35fr 1.15fr 1fr 1fr 1fr 1fr 1.35fr 1.35fr;
+    grid-template-rows: 0.85fr 1fr 1fr 1fr 0.85fr 0.85fr;
+    gap:2px;
+  }
+
+  .tile{
+    position:relative;
+    overflow:hidden;
+    background:#0b0b0e;
+    border:1px solid var(--line);
+  }
+  .tile-media{
+    position:absolute; inset:0;
+    will-change: transform;
+    transition: transform .35s ease-out;
+  }
+  .tile-pan{
+    position:absolute; inset:-6%;
+  }
+
+  /* ---------- areas ---------- */
+  .a-sca{grid-area: 1 / 1 / 3 / 3;}
+  .a-tnw{grid-area: 1 / 3 / 2 / 4;}
+  .a-whw{grid-area: 1 / 4 / 2 / 5;}
+  .a-emp{grid-area: 1 / 5 / 2 / 7;}
+  .a-clB{grid-area: 1 / 7 / 3 / 9;}
+  .a-mac{grid-area: 2 / 3 / 4 / 6;}
+  .a-dts{grid-area: 2 / 6 / 4 / 7;}
+  .a-pxA{grid-area: 3 / 1 / 5 / 3;}
+  .a-trk{grid-area: 3 / 7 / 5 / 9;}
+  .a-pxB{grid-area: 4 / 3 / 6 / 5;}
+  .a-gly{grid-area: 4 / 5 / 6 / 7;}
+  .a-grA{grid-area: 5 / 1 / 6 / 3;}
+  .a-stB{grid-area: 5 / 7 / 7 / 9;}
+  .a-whB{grid-area: 6 / 1 / 7 / 3;}
+  .a-grB{grid-area: 6 / 3 / 7 / 7;}
+
+  /* ---------- solids & gradients ---------- */
+  .fill-tan{ background: var(--tan); }
+  .fill-cream{ background: var(--cream); }
+  .fill-white{ background: var(--white); }
+
+  .a-emp{
+    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1.4px);
+    background-size: 20px 20px;
+    animation: bgdrift 46s linear infinite;
+  }
+
+  .shimmer{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none;
+  }
+  .shimmer::before{
+    content:'';
+    position:absolute; top:-60%; left:-60%; width:220%; height:220%;
+    background: linear-gradient(75deg, transparent 44%, rgba(255,255,255,.55) 50%, transparent 56%);
+    animation: shimmer-move 7s ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes shimmer-move{
+    0%{ transform: translate(-35%,-15%); }
+    50%{ transform: translate(35%,15%); }
+    100%{ transform: translate(-35%,-15%); }
+  }
+
+  .tile-video{
+    width:100%; height:100%;
+    object-fit:cover; display:block;
+  }
+  .tile-video.v-warm{
+    background:
+      radial-gradient(ellipse 55% 65% at 28% 24%, rgba(255,255,255,.9), transparent 55%),
+      radial-gradient(ellipse 60% 70% at 62% 55%, var(--cloud-c) 0%, transparent 62%),
+      radial-gradient(ellipse 70% 75% at 40% 70%, var(--cloud-a) 0%, transparent 65%),
+      radial-gradient(ellipse 90% 90% at 80% 20%, var(--cloud-b) 0%, transparent 60%),
+      #cfa96a;
+  }
+  .tile-video.v-storm{
+    background:
+      radial-gradient(ellipse 50% 55% at 70% 25%, var(--storm-b) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 80% at 35% 55%, var(--storm-a) 0%, transparent 62%),
+      radial-gradient(ellipse 90% 90% at 55% 85%, var(--storm-c) 0%, transparent 70%),
+      #2c2e37;
+  }
+  .tile-video.v-macro{
+    background:
+      radial-gradient(circle at 60% 48%, #05130b 0%, #05130b 6%, transparent 9%),
+      radial-gradient(circle at 60% 48%, rgba(0,0,0,.55) 9%, transparent 16%),
+      radial-gradient(ellipse 70% 70% at 60% 45%, #4c8a49 0%, transparent 55%),
+      radial-gradient(ellipse 90% 90% at 30% 70%, #2f5c37 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 80% 20%, #8fbf6b 0%, transparent 55%),
+      #1c3524;
+  }
+  .tile-video.v-butterfly{
+    background:
+      radial-gradient(ellipse 55% 55% at 55% 38%, #f2a13c 0%, transparent 55%),
+      radial-gradient(ellipse 80% 80% at 28% 68%, #c67bd6 0%, transparent 60%),
+      radial-gradient(ellipse 90% 90% at 72% 82%, #7a4a8f 0%, transparent 65%),
+      #331c37;
+  }
+  .tile-video.v-jelly{
+    background:
+      radial-gradient(ellipse 36% 46% at 55% 42%, rgba(255,255,255,.45) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 80% at 50% 60%, #2a5a68 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 90%, #0c1a2b 0%, transparent 70%),
+      #061019;
+  }
+  .tile-grade{
+    position:absolute; inset:0; pointer-events:none;
+  }
+
+  .fill-cloud .tile-pan{ animation: pan-a 26s ease-in-out infinite alternate; }
+  .fill-cloud .tile-grade{
+    background: radial-gradient(ellipse 85% 85% at 50% 45%, transparent 45%, rgba(4,10,6,.55) 100%),
+                radial-gradient(ellipse 55% 45% at 40% 35%, rgba(210,255,190,.16), transparent 60%);
+  }
+
+  .fill-storm .tile-pan{ animation: pan-b 30s ease-in-out infinite alternate; }
+  .fill-storm .tile-grade{
+    background: radial-gradient(ellipse 45% 50% at 50% 42%, rgba(190,230,235,.3), transparent 60%),
+                linear-gradient(200deg, rgba(6,16,25,.4), transparent 55%);
+    mix-blend-mode: soft-light;
+  }
+
+  .fill-macro .tile-pan{ animation: pan-c 22s ease-in-out infinite alternate; }
+  .fill-macro .tile-grade{
+    background: radial-gradient(ellipse 85% 85% at 50% 45%, transparent 45%, rgba(10,4,14,.6) 100%),
+                radial-gradient(ellipse 50% 40% at 55% 35%, rgba(255,210,140,.2), transparent 60%);
+  }
+  .fill-macro .noise{
+    position:absolute; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,.5) 1px, transparent 1.3px);
+    background-size: 5px 5px;
+    mix-blend-mode: overlay;
+    opacity:.14;
+  }
+
+  .fill-gradA .tile-pan{
+    background:
+      radial-gradient(ellipse 70% 80% at 30% 30%, #f2d3e8 0%, transparent 60%),
+      radial-gradient(ellipse 80% 80% at 70% 70%, var(--lav) 0%, transparent 65%),
+      #cbb7e0;
+    animation: pan-a 24s ease-in-out infinite alternate;
+  }
+  .fill-gradB .tile-pan{
+    background:
+      radial-gradient(ellipse 60% 90% at 15% 40%, var(--pink) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 90% at 85% 60%, var(--cloud-c) 0%, transparent 55%),
+      #d9c9e8;
+    animation: pan-b 28s ease-in-out infinite alternate;
+  }
+
+  @keyframes pan-a{
+    0%{ transform: scale(1) translate(0,0); }
+    100%{ transform: scale(1.09) translate(-1.5%, 1%); }
+  }
+  @keyframes pan-b{
+    0%{ transform: scale(1.05) translate(0,0); }
+    100%{ transform: scale(1.14) translate(1.5%,-1.2%); }
+  }
+  @keyframes pan-c{
+    0%{ transform: scale(1.02) translate(0,0); }
+    100%{ transform: scale(1.1) translate(-1%,-1.5%); }
+  }
+
+  /* ---------- badges & readouts ---------- */
+  .badge-scene{
+    position:absolute; top:.5em; left:.5em; z-index:5;
+    display:flex; align-items:center; gap:.4em;
+    background:var(--badge-bg); color:var(--ink);
+    font-size:.72em; letter-spacing:.04em;
+    padding:.28em .55em; line-height:1;
+  }
+  .badge-scene .dot{
+    width:.55em; height:.55em; border-radius:50%;
+    background:var(--dotcolor,var(--teal));
+    box-shadow:0 0 .5em var(--dotcolor,var(--teal));
+    animation: blink 2.8s ease-in-out infinite;
+  }
+  .badge-scene.flt{ background: var(--flt-pink); color:#1a0a13; }
+  .badge-scene.flt .dot{ background:#1a0a13; box-shadow:none; }
+
+  .badge-clip{
+    position:absolute; z-index:5;
+    background:var(--badge-bg); color:#c9c6bd;
+    font-size:.62em; padding:.2em .5em; line-height:1.5;
+  }
+  .coord{
+    position:absolute; z-index:5;
+    background:var(--badge-bg); color:#d6d3ca;
+    font-size:.6em; padding:.15em .45em; line-height:1.5;
+    letter-spacing:.02em;
+  }
+
+  @keyframes blink{
+    0%,100%{ opacity:1; } 50%{ opacity:.35; }
+  }
+
+  #trackPathGlow{
+    animation: draw-path 6.5s ease-in-out infinite alternate;
+  }
+  @keyframes draw-path{
+    0%{ stroke-dashoffset: 260; }
+    100%{ stroke-dashoffset: 0; }
+  }
+
+  /* ---------- heatmaps / dot fields (built by JS) ---------- */
+  .cellgrid{
+    position:absolute; inset:0;
+    display:grid;
+  }
+  .cellgrid .c{
+    animation: pulse 4.5s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity: var(--o); } 50%{ opacity: calc(var(--o) * .55); }
+  }
+
+  .scatter-dot{
+    position:absolute; border-radius:50%;
+    animation: pulse 3.6s ease-in-out infinite;
+  }
+
+  .glyph{
+    position:absolute; inset:0;
+    display:grid;
+    font-size:.62em;
+    color: var(--tan);
+  }
+  .glyph span{ display:flex; align-items:center; justify-content:center; }
+
+  /* ---------- floating stray ids ---------- */
+  .stray{
+    position:absolute; z-index:4;
+    color: rgba(255,255,255,.28);
+    font-size:.6em; letter-spacing:.03em;
+  }
+
+  .ring{
+    position:absolute; border-radius:50%;
+    border:1px solid rgba(255,255,255,.14);
+    z-index:1; overflow:hidden;
+  }
+  .ring::after{
+    content:'';
+    position:absolute; inset:0; border-radius:50%;
+    background: conic-gradient(from 0deg, rgba(131,230,196,.4), transparent 16%, transparent 100%);
+    animation: ring-sweep 11s linear infinite;
+    opacity:.65;
+  }
+  @keyframes ring-sweep{ to{ transform: rotate(360deg); } }
+
+  .scan-sweep{
+    position:absolute; left:0; right:0; height:16%; z-index:7; pointer-events:none;
+    background: linear-gradient(180deg, transparent, rgba(131,230,196,.09) 45%, rgba(131,230,196,.16) 50%, rgba(131,230,196,.09) 55%, transparent);
+    mix-blend-mode: screen;
+    animation: scan-sweep 14s linear infinite;
+  }
+  @keyframes scan-sweep{
+    0%{ top:-18%; }
+    100%{ top:100%; }
+  }
+
+  .signature{
+    position:absolute; right:.6em; bottom:.5em; z-index:6;
+    font-size:.62em; color:rgba(255,255,255,.4);
+    letter-spacing:.06em;
+  }
+
+  .credit{
+    text-align:center; color:#55534d; font-size:12px;
+    margin-top:14px; letter-spacing:.02em;
+  }
+
+  .reticle{
+    position:absolute; z-index:10; pointer-events:none;
+    transform: translate(-50%,-50%);
+    opacity:0; transition: opacity .25s ease;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .reticle.active{ opacity:.85; }
+  .reticle svg{
+    display:block; width:2.6em; height:2.6em;
+    filter: drop-shadow(0 0 .3em rgba(131,230,196,.55));
+  }
+  .reticle-label{
+    margin-top:.25em; font-size:.58em; color:var(--teal);
+    background:rgba(6,6,9,.78); padding:.12em .45em;
+    white-space:nowrap; letter-spacing:.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tile-pan, .cellgrid .c, .scatter-dot, .badge-scene .dot, #trackPathGlow,
+    .lattice, .a-emp, .shimmer::before, .ring::after, .scan-sweep{
+      animation:none !important;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="stage">
+  <div class="lattice" id="lattice">
+    <div class="ring" style="width:620px;height:620px; left:-160px; top:-360px;"></div>
+    <div class="ring" style="width:420px;height:420px; left:-140px; top:520px;"></div>
+
+    <div class="stray" style="left:56.5%; top:1.2%;">S48A</div>
+    <div class="stray" style="left:68.2%; top:75.8%;">6764</div>
+    <div class="stray" style="left:68.1%; top:99.5%;">1612</div>
+    <div class="stray" style="left:80.2%; top:76.3%;">3C5F</div>
+
+    <div class="grid">
+
+      <!-- scatter analytics -->
+      <div class="tile a-sca" id="tileSca"></div>
+
+      <!-- tan / cream swatches -->
+      <div class="tile a-tnw fill-tan"><div class="shimmer" style="--delay:0s;"></div></div>
+      <div class="tile a-whw fill-cream"><div class="shimmer" style="--delay:-3.2s;"></div></div>
+
+      <!-- empty dotted cell -->
+      <div class="tile a-emp"></div>
+
+      <!-- big warm cloud -->
+      <div class="tile a-clB fill-cloud">
+        <div class="tile-media">
+          <div class="tile-pan">
+            <video class="tile-video v-macro" autoplay muted loop playsinline preload="auto">
+              <source src="videos/chameleon-side.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="tile-grade"></div>
+        <div class="badge-scene" style="--dotcolor:var(--scene-green)"><span class="dot"></span>S03</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C1<br>10.9,00.7</div>
+        <div class="badge-clip" style="top:.5em; right:.5em; text-align:right;">C2<br>16.0,00.7</div>
+        <div class="coord" style="bottom:.5em; right:.5em;">16.0,04.8</div>
+      </div>
+
+      <!-- macro / organic -->
+      <div class="tile a-mac fill-macro">
+        <div class="tile-media">
+          <div class="tile-pan">
+            <video class="tile-video v-butterfly" autoplay muted loop playsinline preload="auto">
+              <source src="videos/butterfly-flower.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="tile-grade"></div>
+        <div class="noise"></div>
+        <div class="badge-scene" style="--dotcolor:var(--scene-green)"><span class="dot"></span>S02</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C1<br>06.9,02.0</div>
+      </div>
+
+      <!-- narrow dot strip -->
+      <div class="tile a-dts" id="tileDts">
+        <div class="coord" style="bottom:.5em; right:.5em;">C3<br>11.7,05.9</div>
+      </div>
+
+      <!-- pink heatmap / FLT -->
+      <div class="tile a-pxA" id="tilePxA">
+        <div class="badge-scene flt" style="--dotcolor:#1a0a13"><span class="dot"></span>FLT</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C1<br>00.0,84.2</div>
+        <div class="coord" style="bottom:.5em; right:.5em;">C3<br>05.2,08.4</div>
+        <div class="coord" style="bottom:.5em; left:.5em;">C4<br>00.0,08.4</div>
+      </div>
+
+      <!-- tracking path -->
+      <div class="tile a-trk">
+        <div class="badge-scene flt" style="--dotcolor:#1a0a13"><span class="dot"></span>FLT</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C1<br>03.8,02.1</div>
+        <div class="coord" style="bottom:.5em; left:.5em;">C4<br>03.8,06.1</div>
+        <svg viewBox="0 0 240 200" style="position:absolute; inset:0; width:100%; height:100%;">
+          <path id="trackPath" d="M40,30 L58,46 L52,70 L70,86 L64,112 L88,120 L104,150 L140,140 L150,116 L182,104"
+                fill="none" stroke="var(--teal)" stroke-width="1.1" stroke-dasharray="6 4" opacity=".85"/>
+          <path id="trackPathGlow" d="M40,30 L58,46 L52,70 L70,86 L64,112 L88,120 L104,150 L140,140 L150,116 L182,104"
+                fill="none" stroke="var(--teal)" stroke-width="1.6" opacity=".55"
+                stroke-dasharray="260" stroke-dashoffset="260" />
+          <g fill="var(--teal)">
+            <circle cx="40" cy="30" r="2.4"/>
+            <circle cx="70" cy="86" r="2.4"/>
+            <circle cx="104" cy="150" r="2.4"/>
+            <circle cx="182" cy="104" r="2.4"/>
+          </g>
+          <rect x="58" y="42" width="4.4" height="4.4" fill="none" stroke="#f2a8d6" stroke-width="1"/>
+          <rect x="150" y="112" width="4.4" height="4.4" fill="none" stroke="#f2a8d6" stroke-width="1"/>
+          <text x="46" y="24" fill="#cfcac0" font-size="7">24,15</text>
+          <text x="108" y="168" fill="#cfcac0" font-size="7">52,92</text>
+        </svg>
+      </div>
+
+      <!-- gold/tan heatmap -->
+      <div class="tile a-pxB" id="tilePxB">
+        <div class="badge-scene" style="--dotcolor:var(--scene-teal)"><span class="dot"></span>S01</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C1<br>04.1,03.3</div>
+        <div class="badge-clip" style="top:.5em; right:.5em; text-align:right;">C2<br>05.2,04.2</div>
+      </div>
+
+      <!-- glyph field -->
+      <div class="tile a-gly" id="tileGly"></div>
+
+      <!-- pink/lav gradient -->
+      <div class="tile a-grA fill-gradA">
+        <div class="tile-media"><div class="tile-pan"></div></div>
+        <div class="coord" style="bottom:.5em; right:.5em;">C3<br>88.9,07.1</div>
+      </div>
+
+      <!-- storm cloud -->
+      <div class="tile a-stB fill-storm">
+        <div class="tile-media">
+          <div class="tile-pan">
+            <video class="tile-video v-jelly" autoplay muted loop playsinline preload="auto">
+              <source src="videos/jellyfish-ocean.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="tile-grade"></div>
+        <div class="badge-scene" style="--dotcolor:var(--scene-blue)"><span class="dot"></span>S02</div>
+        <div class="badge-clip" style="top:2.6em; left:.5em;">C3<br>P4 69,47</div>
+        <div class="coord" style="bottom:.5em; right:.5em;">C4<br>07.3,06.9</div>
+      </div>
+
+      <!-- white bottom -->
+      <div class="tile a-whB fill-white"><div class="shimmer" style="--delay:-5.5s;"></div></div>
+
+      <!-- wide bottom gradient -->
+      <div class="tile a-grB fill-gradB">
+        <div class="tile-media"><div class="tile-pan"></div></div>
+      </div>
+
+    </div>
+
+    <div class="scan-sweep"></div>
+
+    <div class="signature">LTC — 04.7</div>
+
+    <div class="reticle" id="reticle">
+      <svg viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="9" fill="none" stroke="var(--teal)" stroke-width="1"/>
+        <line x1="20" y1="1" x2="20" y2="11" stroke="var(--teal)" stroke-width="1"/>
+        <line x1="20" y1="29" x2="20" y2="39" stroke="var(--teal)" stroke-width="1"/>
+        <line x1="1" y1="20" x2="11" y2="20" stroke="var(--teal)" stroke-width="1"/>
+        <line x1="29" y1="20" x2="39" y2="20" stroke="var(--teal)" stroke-width="1"/>
+      </svg>
+      <div class="reticle-label" id="reticleLabel">00.0,00.0</div>
+    </div>
+  </div>
+
+  <div class="credit">lattice — recreación del sistema visual (mosaico HUD generativo)</div>
+</div>
+
+<script>
+(function(){
+
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+
+  // ---- pixel heatmap builder ----
+  function buildHeat(el, cols, rows, colorFn, focalPts, opts){
+    opts = opts || {};
+    const floor = opts.floor || 0;
+    const grid = document.createElement('div');
+    grid.className = 'cellgrid';
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        let best = 999;
+        focalPts.forEach(p=>{
+          const dx = (c/cols) - p.x, dy = (r/rows) - p.y;
+          const d = Math.sqrt(dx*dx+dy*dy) / p.r;
+          if(d < best) best = d;
+        });
+        let o = Math.max(0, 1 - best);
+        o = Math.pow(o, 1.4) * rnd(0.55,1);
+        if(o < 0.06) o = floor;
+        const cell = document.createElement('div');
+        cell.className = 'c';
+        cell.style.background = colorFn(o);
+        cell.style.setProperty('--o', o.toFixed(2));
+        cell.style.animationDelay = rnd(0,4).toFixed(2)+'s';
+        cell.style.margin = (opts.gap!==undefined?opts.gap:'1px');
+        grid.appendChild(cell);
+      }
+    }
+    el.appendChild(grid);
+  }
+
+  buildHeat(document.getElementById('tilePxA'), 20, 26,
+    o => `rgba(239,143,192,${o})`,
+    [{x:.32,y:.28,r:.42},{x:.22,y:.55,r:.35},{x:.4,y:.7,r:.3}]
+  );
+
+  buildHeat(document.getElementById('tilePxB'), 16, 18,
+    o => `rgba(203,178,140,${o})`,
+    [{x:.75,y:.7,r:.55}],
+    {gap:'1px', floor:0.16}
+  );
+
+  // ---- scatter dot fields ----
+  function buildScatter(el, count, palette, clusterX, clusterY, spread){
+    for(let i=0;i<count;i++){
+      const ang = rnd(0, Math.PI*2);
+      const rad = Math.pow(Math.random(), 1.6) * spread;
+      const x = clusterX + Math.cos(ang)*rad*rnd(.6,1);
+      const y = clusterY + Math.sin(ang)*rad*rnd(.3,1);
+      if(x<0||x>1||y<0||y>1) continue;
+      const s = rnd(2,7);
+      const d = document.createElement('div');
+      d.className = 'scatter-dot';
+      const filled = Math.random() > 0.55;
+      const col = palette[Math.floor(Math.random()*palette.length)];
+      d.style.left = (x*100)+'%';
+      d.style.top = (y*100)+'%';
+      d.style.width = s+'px';
+      d.style.height = s+'px';
+      d.style.background = filled ? col : 'transparent';
+      d.style.border = filled ? 'none' : `1px solid ${col}`;
+      d.style.opacity = rnd(.35,.95).toFixed(2);
+      d.style.animationDelay = rnd(0,3.6).toFixed(2)+'s';
+      el.appendChild(d);
+    }
+  }
+
+  buildScatter(document.getElementById('tileSca'), 70,
+    ['#ef8fc0','#f2a8d6','#c98fef'], .16, .28, .32);
+
+  buildScatter(document.getElementById('tileDts'), 26,
+    ['#83e6c4','#e9e6dc'], .5, .35, .5);
+
+  // ---- glyph field ----
+  (function(){
+    const el = document.getElementById('tileGly');
+    const cols = 16, rows = 12;
+    const g = document.createElement('div');
+    g.className = 'glyph';
+    g.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+    g.style.gridTemplateRows = `repeat(${rows},1fr)`;
+    const chars = ['x','+','o','·'];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const span = document.createElement('span');
+        const edge = (c/cols) + (r/rows);
+        if(edge < 1.05){
+          span.textContent = Math.random()>0.25 ? chars[Math.floor(Math.random()*2)] : chars[2];
+          span.style.opacity = (0.35 + Math.random()*0.5).toFixed(2);
+        } else if(edge < 1.35 && Math.random()>0.5){
+          span.textContent = chars[3];
+          span.style.opacity = .3;
+        } else {
+          span.textContent = '';
+        }
+        g.appendChild(span);
+      }
+    }
+    el.appendChild(g);
+
+    const live = Array.from(g.querySelectorAll('span')).filter(s=>s.textContent);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduceMotion){
+      setInterval(()=>{
+        for(let i=0;i<3;i++){
+          const s = live[Math.floor(Math.random()*live.length)];
+          if(!s) continue;
+          s.textContent = chars[Math.floor(Math.random()*chars.length)];
+          s.style.transition = 'opacity .15s ease';
+          s.style.opacity = 1;
+          setTimeout(()=>{ s.style.opacity = (0.35 + Math.random()*0.5).toFixed(2); }, 280);
+        }
+      }, 1300);
+    }
+  })();
+
+  // ---- subtle parallax + live tracking reticle on mousemove ----
+  const stage = document.getElementById('lattice');
+  const media = document.querySelectorAll('.tile-media');
+  const reticle = document.getElementById('reticle');
+  const reticleLabel = document.getElementById('reticleLabel');
+  stage.addEventListener('mousemove', (e)=>{
+    const r = stage.getBoundingClientRect();
+    const fx = (e.clientX - r.left)/r.width;
+    const fy = (e.clientY - r.top)/r.height;
+    const px = fx - 0.5, py = fy - 0.5;
+    media.forEach((m,i)=>{
+      const depth = (i%3)+1;
+      m.style.transform = `translate(${(-px*5*depth).toFixed(1)}px, ${(-py*5*depth).toFixed(1)}px)`;
+    });
+    reticle.style.left = (fx*100).toFixed(2)+'%';
+    reticle.style.top = (fy*100).toFixed(2)+'%';
+    reticle.classList.add('active');
+    reticleLabel.textContent = (fx*16).toFixed(1).padStart(4,'0')+','+(fy*8.4).toFixed(1).padStart(4,'0');
+  });
+  stage.addEventListener('mouseleave', ()=>{
+    media.forEach(m=> m.style.transform = '');
+    reticle.classList.remove('active');
+  });
+
+})();
+</script>
+
+</body>
+</html>

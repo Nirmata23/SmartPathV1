@@ -32,6 +32,24 @@ supabase/
   tests/          # rls_test.sql — 33 pruebas con los 4 roles y 2 colegios
 ```
 
+## Aplicar la base de datos (Supabase)
+
+Las migraciones en `supabase/migrations/` van en orden. La 0001–0008 ya están
+aplicadas en el proyecto; **0009_cobros.sql está pendiente de aplicar**. Con el
+CLI de Supabase:
+
+```bash
+supabase link --project-ref <TU_PROYECTO>
+supabase db push                 # aplica migraciones pendientes
+supabase functions deploy        # despliega todas las Edge Functions
+```
+
+O aplica el SQL de `0009_cobros.sql` desde el editor SQL del dashboard y despliega
+`supabase/functions/aprobar-pago` desde el panel de Edge Functions.
+
+Edge Functions del proyecto: `crear-colegio`, `canjear-invitacion`,
+`crear-acceso-estudiante`, `resetear-pin`, `otorgar-xp`, `aprobar-pago`.
+
 ## Seguridad (reglas no negociables)
 
 1. RLS activada en todas las tablas, aislada por `colegio_id` y afinada por rol.

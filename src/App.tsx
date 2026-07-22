@@ -10,12 +10,14 @@ import { DirectorHome } from './app/director/DirectorHome'
 import { ColegioPage } from './app/director/ColegioPage'
 import { PersonasPage } from './app/director/PersonasPage'
 import { AcademicoPage } from './app/director/AcademicoPage'
+import { CobrosPage } from './app/director/CobrosPage'
 import { DocenteHome } from './app/docente/DocenteHome'
 import { AsistenciaPage } from './app/docente/AsistenciaPage'
 import { CalificacionesPage } from './app/docente/CalificacionesPage'
 import { PadreHome } from './app/padre/PadreHome'
 import { NotasPage } from './app/padre/NotasPage'
 import { AsistenciaHijosPage } from './app/padre/AsistenciaHijosPage'
+import { PagosPage } from './app/padre/PagosPage'
 import { EstudianteHome } from './app/estudiante/EstudianteHome'
 import { TareasPage } from './app/estudiante/TareasPage'
 import { AvatarPage } from './app/estudiante/AvatarPage'
@@ -65,6 +67,7 @@ export default function App() {
       <Route path="/director/colegio" element={<RequiereRol rol="director"><ColegioPage /></RequiereRol>} />
       <Route path="/director/personas" element={<RequiereRol rol="director"><PersonasPage /></RequiereRol>} />
       <Route path="/director/academico" element={<RequiereRol rol="director"><AcademicoPage /></RequiereRol>} />
+      <Route path="/director/cobros" element={<RequiereRol rol="director"><CobrosPage /></RequiereRol>} />
 
       <Route path="/docente" element={<RequiereRol rol="docente"><DocenteHome /></RequiereRol>} />
       <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><AsistenciaPage /></RequiereRol>} />
@@ -73,6 +76,7 @@ export default function App() {
       <Route path="/padre" element={<RequiereRol rol="padre"><PadreHome /></RequiereRol>} />
       <Route path="/padre/notas" element={<RequiereRol rol="padre"><NotasPage /></RequiereRol>} />
       <Route path="/padre/asistencia" element={<RequiereRol rol="padre"><AsistenciaHijosPage /></RequiereRol>} />
+      <Route path="/padre/pagos" element={<RequiereRol rol="padre"><PagosPage /></RequiereRol>} />
 
       <Route path="/estudiante" element={<RequiereRol rol="estudiante"><EstudianteHome /></RequiereRol>} />
       <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><TareasPage /></RequiereRol>} />

@@ -14,6 +14,7 @@ import {
   Sparkles,
   Trophy,
   Users,
+  Wallet,
 } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
 import { PixelAvatar } from '../components/PixelAvatar'
@@ -33,6 +34,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/director/colegio', etiqueta: 'Colegio', Icono: School },
     { a: '/director/personas', etiqueta: 'Personas', Icono: Users },
     { a: '/director/academico', etiqueta: 'Académico', Icono: BookOpenCheck },
+    { a: '/director/cobros', etiqueta: 'Cobros', Icono: Wallet },
     { a: '/director/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/director/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],
@@ -47,6 +49,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/padre', etiqueta: 'Inicio', Icono: Home },
     { a: '/padre/notas', etiqueta: 'Notas', Icono: ClipboardList },
     { a: '/padre/asistencia', etiqueta: 'Asistencia', Icono: CalendarCheck2 },
+    { a: '/padre/pagos', etiqueta: 'Pagos', Icono: Wallet },
     { a: '/padre/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/padre/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],

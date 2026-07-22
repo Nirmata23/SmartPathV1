@@ -12,6 +12,7 @@ import {
   Megaphone,
   School,
   Sparkles,
+  Trophy,
   Users,
 } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
@@ -52,6 +53,7 @@ const NAV: Record<Rol, ItemNav[]> = {
   estudiante: [
     { a: '/estudiante', etiqueta: 'Inicio', Icono: Home },
     { a: '/estudiante/tareas', etiqueta: 'Tareas', Icono: ClipboardList },
+    { a: '/estudiante/logros', etiqueta: 'Logros', Icono: Trophy },
     { a: '/estudiante/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/estudiante/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
     { a: '/estudiante/avatar', etiqueta: 'Mi avatar', Icono: Sparkles },

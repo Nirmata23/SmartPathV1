@@ -19,6 +19,7 @@ import { AsistenciaHijosPage } from './app/padre/AsistenciaHijosPage'
 import { EstudianteHome } from './app/estudiante/EstudianteHome'
 import { TareasPage } from './app/estudiante/TareasPage'
 import { AvatarPage } from './app/estudiante/AvatarPage'
+import { LogrosPage } from './app/estudiante/LogrosPage'
 import { CalendarioPage } from './app/compartido/CalendarioPage'
 import { ComunicadosPage } from './app/compartido/ComunicadosPage'
 
@@ -75,6 +76,7 @@ export default function App() {
 
       <Route path="/estudiante" element={<RequiereRol rol="estudiante"><EstudianteHome /></RequiereRol>} />
       <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><TareasPage /></RequiereRol>} />
+      <Route path="/estudiante/logros" element={<RequiereRol rol="estudiante"><LogrosPage /></RequiereRol>} />
       <Route path="/estudiante/avatar" element={<RequiereRol rol="estudiante"><AvatarPage /></RequiereRol>} />
 
       {(['director', 'docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (

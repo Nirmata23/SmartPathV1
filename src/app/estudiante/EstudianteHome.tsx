@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Flame, Sparkles } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../features/auth/AuthProvider'
 import { EncabezadoPagina, EstadoVacio, Tarjeta } from '../AppLayout'
 import { PixelAvatar } from '../../components/PixelAvatar'
+import { useGamificacion } from '../../features/gamificacion/useGamificacion'
+import { useRealtimeAcademico } from '../../features/realtime/useRealtimeAcademico'
 
 interface TareaFila {
   id: string
@@ -15,6 +17,8 @@ interface TareaFila {
 // Panel del estudiante: su avatar y sus tareas (solo lo propio, por RLS).
 export function EstudianteHome() {
   const { perfil } = useAuth()
+  const { data: juego } = useGamificacion()
+  useRealtimeAcademico(['gamificacion', 'estudiante-inicio'])
 
   const { data, isLoading } = useQuery({
     queryKey: ['estudiante-inicio'],
@@ -55,12 +59,19 @@ export function EstudianteHome() {
             codigoPixel={data?.yo?.avatar_pixel}
             tamano={96}
           />
-          <div>
-            <div className="text-[15px] font-semibold">{perfil?.nombre}</div>
-            <div className="mt-0.5 font-mono text-[11px] tracking-widest text-muted uppercase">
-              Mi avatar
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-amber" />
+              <span className="font-display text-lg leading-none">{juego?.xpTotal ?? 0}</span>
+              <span className="font-mono text-[9px] tracking-widest text-muted uppercase">XP</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Flame className={`h-4 w-4 ${(juego?.racha ?? 0) > 0 ? 'text-amber' : 'text-muted-2'}`} />
+              <span className="font-display text-lg leading-none">{juego?.racha ?? 0}</span>
+              <span className="font-mono text-[9px] tracking-widest text-muted uppercase">racha</span>
             </div>
           </div>
+          <div className="text-[15px] font-semibold">{perfil?.nombre}</div>
         </Tarjeta>
 
         <Tarjeta className="lg:col-span-2">

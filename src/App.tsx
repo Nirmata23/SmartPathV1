@@ -19,6 +19,8 @@ import { AsistenciaHijosPage } from './app/padre/AsistenciaHijosPage'
 import { EstudianteHome } from './app/estudiante/EstudianteHome'
 import { TareasPage } from './app/estudiante/TareasPage'
 import { AvatarPage } from './app/estudiante/AvatarPage'
+import { CalendarioPage } from './app/compartido/CalendarioPage'
+import { ComunicadosPage } from './app/compartido/ComunicadosPage'
 
 function PantallaCarga() {
   return (
@@ -74,6 +76,13 @@ export default function App() {
       <Route path="/estudiante" element={<RequiereRol rol="estudiante"><EstudianteHome /></RequiereRol>} />
       <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><TareasPage /></RequiereRol>} />
       <Route path="/estudiante/avatar" element={<RequiereRol rol="estudiante"><AvatarPage /></RequiereRol>} />
+
+      {(['director', 'docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (
+        <Route key={`cal-${rol}`} path={`/${rol}/calendario`} element={<RequiereRol rol={rol}><CalendarioPage /></RequiereRol>} />
+      ))}
+      {(['director', 'docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (
+        <Route key={`com-${rol}`} path={`/${rol}/comunicados`} element={<RequiereRol rol={rol}><ComunicadosPage /></RequiereRol>} />
+      ))}
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

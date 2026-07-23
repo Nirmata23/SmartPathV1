@@ -148,6 +148,65 @@ export async function generarBoleta(
   return codigo
 }
 
+export interface DatosRecibo {
+  colegioNombre: string
+  empleadoNombre: string
+  puesto: string
+  mes: string
+  bruto: number
+  igss: number
+  isr: number
+  neto: number
+  moneda: string
+}
+
+// Recibo de nómina (§32). No se registra en documento_verificable: es interno.
+export function generarReciboNomina(d: DatosRecibo): void {
+  const doc = new jsPDF()
+  encabezado(doc, d.colegioNombre, 'Recibo de nómina')
+
+  doc.setTextColor(INK)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(13)
+  doc.text(d.empleadoNombre, 20, 50)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  doc.setTextColor(MUTED)
+  doc.text(`${d.puesto || 'Personal'} · Periodo: ${d.mes}`, 20, 56)
+
+  let y = 74
+  const fila = (etiqueta: string, valor: number, negativo = false, bold = false) => {
+    doc.setFont('helvetica', bold ? 'bold' : 'normal')
+    doc.setTextColor(bold ? INK : MUTED)
+    doc.setFontSize(bold ? 12 : 10)
+    doc.text(etiqueta, 24, y)
+    doc.setTextColor(negativo ? '#dc2626' : bold ? INK : MUTED)
+    doc.text(`${negativo ? '−' : ''}${d.moneda}${valor.toFixed(2)}`, 170, y, { align: 'right' })
+    y += 9
+  }
+  doc.setFillColor(242, 237, 229)
+  doc.rect(20, 66, 170, 8, 'F')
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9)
+  doc.setTextColor(INK)
+  doc.text('CONCEPTO', 24, 71.5)
+  doc.text('MONTO', 170, 71.5, { align: 'right' })
+
+  fila('Salario bruto', d.bruto)
+  fila('IGSS (4.83%)', d.igss, true)
+  fila('Retención ISR', d.isr, true)
+  y += 2
+  doc.setDrawColor(226, 219, 208)
+  doc.line(20, y, 190, y)
+  y += 8
+  fila('Neto a recibir', d.neto, false, true)
+
+  doc.setFontSize(8)
+  doc.setTextColor(MUTED)
+  doc.text('El pago del salario se realiza por el banco. Este recibo es el desglose de nómina.', 20, 250)
+  doc.save(`recibo-${d.empleadoNombre.replace(/\s+/g, '_')}-${d.mes}.pdf`)
+}
+
 export async function generarSolvencia(
   base: DatosBase,
   saldoPendiente: number,

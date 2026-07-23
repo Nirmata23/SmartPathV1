@@ -11,6 +11,7 @@ import { ColegioPage } from './app/director/ColegioPage'
 import { PersonasPage } from './app/director/PersonasPage'
 import { AcademicoPage } from './app/director/AcademicoPage'
 import { CobrosPage } from './app/director/CobrosPage'
+import { PlanillaPage } from './app/director/PlanillaPage'
 import { DocenteHome } from './app/docente/DocenteHome'
 import { AsistenciaPage } from './app/docente/AsistenciaPage'
 import { CalificacionesPage } from './app/docente/CalificacionesPage'
@@ -71,6 +72,7 @@ export default function App() {
       <Route path="/director/personas" element={<RequiereRol rol="director"><PersonasPage /></RequiereRol>} />
       <Route path="/director/academico" element={<RequiereRol rol="director"><AcademicoPage /></RequiereRol>} />
       <Route path="/director/cobros" element={<RequiereRol rol="director"><CobrosPage /></RequiereRol>} />
+      <Route path="/director/planilla" element={<RequiereRol rol="director"><PlanillaPage /></RequiereRol>} />
 
       <Route path="/docente" element={<RequiereRol rol="docente"><DocenteHome /></RequiereRol>} />
       <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><AsistenciaPage /></RequiereRol>} />

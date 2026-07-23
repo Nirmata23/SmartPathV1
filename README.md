@@ -34,10 +34,9 @@ supabase/
 
 ## Aplicar la base de datos (Supabase)
 
-Las migraciones en `supabase/migrations/` van en orden y todas (0001–0010) están
-aplicadas en el proyecto. **Pendiente de desplegar: la Edge Function
-`aprobar-pago`** (su tabla ya existe; solo falta subir la función). Con el
-CLI de Supabase:
+Las migraciones en `supabase/migrations/` van en orden y todas (0001–0013) están
+aplicadas en el proyecto, y todas las Edge Functions están desplegadas. Para
+reproducir el proyecto desde cero con el CLI de Supabase:
 
 ```bash
 supabase link --project-ref <TU_PROYECTO>
@@ -49,7 +48,8 @@ O aplica el SQL de `0009_cobros.sql` desde el editor SQL del dashboard y desplie
 `supabase/functions/aprobar-pago` desde el panel de Edge Functions.
 
 Edge Functions del proyecto: `crear-colegio`, `canjear-invitacion`,
-`crear-acceso-estudiante`, `resetear-pin`, `otorgar-xp`, `aprobar-pago`.
+`crear-acceso-estudiante`, `resetear-pin`, `otorgar-xp`, `aprobar-pago`,
+`calcular-planilla`.
 
 ## Seguridad (reglas no negociables)
 

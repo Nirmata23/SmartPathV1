@@ -25,6 +25,8 @@ import { EstudianteHome } from './app/estudiante/EstudianteHome'
 import { TareasPage } from './app/estudiante/TareasPage'
 import { AvatarPage } from './app/estudiante/AvatarPage'
 import { LogrosPage } from './app/estudiante/LogrosPage'
+import { CarnePage } from './app/estudiante/CarnePage'
+import { AccesoPage } from './app/director/AccesoPage'
 import { CalendarioPage } from './app/compartido/CalendarioPage'
 import { ComunicadosPage } from './app/compartido/ComunicadosPage'
 import { VerificarPage } from './app/publico/VerificarPage'
@@ -77,6 +79,7 @@ export default function App() {
       <Route path="/director/cobros" element={<RequiereRol rol="director"><CobrosPage /></RequiereRol>} />
       <Route path="/director/planilla" element={<RequiereRol rol="director"><PlanillaPage /></RequiereRol>} />
       <Route path="/director/admisiones" element={<RequiereRol rol="director"><AdmisionesPage /></RequiereRol>} />
+      <Route path="/director/acceso" element={<RequiereRol rol="director"><AccesoPage /></RequiereRol>} />
 
       <Route path="/docente" element={<RequiereRol rol="docente"><DocenteHome /></RequiereRol>} />
       <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><AsistenciaPage /></RequiereRol>} />
@@ -91,6 +94,7 @@ export default function App() {
       <Route path="/estudiante/tareas" element={<RequiereRol rol="estudiante"><TareasPage /></RequiereRol>} />
       <Route path="/estudiante/logros" element={<RequiereRol rol="estudiante"><LogrosPage /></RequiereRol>} />
       <Route path="/estudiante/avatar" element={<RequiereRol rol="estudiante"><AvatarPage /></RequiereRol>} />
+      <Route path="/estudiante/carne" element={<RequiereRol rol="estudiante"><CarnePage /></RequiereRol>} />
 
       {(['director', 'docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (
         <Route key={`cal-${rol}`} path={`/${rol}/calendario`} element={<RequiereRol rol={rol}><CalendarioPage /></RequiereRol>} />

@@ -34,7 +34,7 @@ supabase/
 
 ## Aplicar la base de datos (Supabase)
 
-Las migraciones en `supabase/migrations/` van en orden y todas (0001–0013) están
+Las migraciones en `supabase/migrations/` van en orden y todas (0001–0016) están
 aplicadas en el proyecto, y todas las Edge Functions están desplegadas. Para
 reproducir el proyecto desde cero con el CLI de Supabase:
 

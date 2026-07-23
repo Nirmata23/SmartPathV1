@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
+  BookMarked,
   BookOpenCheck,
   CalendarCheck2,
   CalendarDays,
@@ -42,6 +43,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/docente', etiqueta: 'Inicio', Icono: Home },
     { a: '/docente/asistencia', etiqueta: 'Asistencia', Icono: CalendarCheck2 },
     { a: '/docente/calificaciones', etiqueta: 'Calificaciones', Icono: ClipboardList },
+    { a: '/docente/agenda', etiqueta: 'Agenda', Icono: BookMarked },
     { a: '/docente/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/docente/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],
@@ -50,6 +52,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/padre/notas', etiqueta: 'Notas', Icono: ClipboardList },
     { a: '/padre/asistencia', etiqueta: 'Asistencia', Icono: CalendarCheck2 },
     { a: '/padre/pagos', etiqueta: 'Pagos', Icono: Wallet },
+    { a: '/padre/agenda', etiqueta: 'Agenda', Icono: BookMarked },
     { a: '/padre/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/padre/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],
@@ -57,6 +60,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/estudiante', etiqueta: 'Inicio', Icono: Home },
     { a: '/estudiante/tareas', etiqueta: 'Tareas', Icono: ClipboardList },
     { a: '/estudiante/logros', etiqueta: 'Logros', Icono: Trophy },
+    { a: '/estudiante/agenda', etiqueta: 'Agenda', Icono: BookMarked },
     { a: '/estudiante/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/estudiante/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
     { a: '/estudiante/avatar', etiqueta: 'Mi avatar', Icono: Sparkles },

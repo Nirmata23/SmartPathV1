@@ -25,6 +25,7 @@ import { LogrosPage } from './app/estudiante/LogrosPage'
 import { CalendarioPage } from './app/compartido/CalendarioPage'
 import { ComunicadosPage } from './app/compartido/ComunicadosPage'
 import { VerificarPage } from './app/publico/VerificarPage'
+import { AgendaPage } from './app/compartido/AgendaPage'
 
 function PantallaCarga() {
   return (
@@ -90,6 +91,9 @@ export default function App() {
       ))}
       {(['director', 'docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (
         <Route key={`com-${rol}`} path={`/${rol}/comunicados`} element={<RequiereRol rol={rol}><ComunicadosPage /></RequiereRol>} />
+      ))}
+      {(['docente', 'padre', 'estudiante'] as Rol[]).map((rol) => (
+        <Route key={`ag-${rol}`} path={`/${rol}/agenda`} element={<RequiereRol rol={rol}><AgendaPage /></RequiereRol>} />
       ))}
 
       <Route path="*" element={<Navigate to="/" replace />} />

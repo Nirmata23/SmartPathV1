@@ -5,12 +5,14 @@ import { useEffect, useRef } from 'react'
 
 type Tile = [number, number, number, number, string, string, string, string]
 
+// 'video:archivo' reproduce metraje real de naturaleza (§44); el resto son
+// blooms de color y pixel-art. Todo va detrás del scrim para mantener contraste.
 const TILES: Tile[] = [
   [-2, 4, 26, 20, 'px-rose', 'FLT', '00.0,04.2', 'deriva'],
-  [1, 26, 24, 34, 'px-rose', 'C1', '00.0,08.4', 'deriva-2'],
+  [1, 26, 24, 34, 'video:/media/jellyfish.mp4', 'MEDUSA', '00.0,08.4', ''],
   [24, 34, 16, 32, 'b-cream', 'C2', '05.2,04.2', ''],
   [40, 36, 22, 38, 'b-rose bloom', 'S01', '08.9,07.1', 'deriva'],
-  [62, 20, 20, 44, 'photo', 'S02', '06.9,02.0', ''],
+  [62, 20, 20, 44, 'video:/media/butterfly.mp4', 'MARIPOSA', '06.9,02.0', ''],
   [68, 2, 14, 15, 'b-cream', '', '', ''],
   [82, 6, 20, 30, 'b-blue bloom', 'S03', '18.9,00.7', 'deriva-2'],
   [82, 40, 18, 24, 'b-amber bloom', 'C3', '16.0,04.8', 'deriva'],
@@ -46,6 +48,36 @@ function dibujarPixeles(c: HTMLCanvasElement, colores: string[]) {
     }
 }
 
+// Video de naturaleza en un tile. Respeta prefers-reduced-motion: si el usuario
+// pide menos animación, muestra el primer frame estático en vez de reproducir.
+function TileVideo({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      v.removeAttribute('autoplay')
+      v.pause()
+    } else {
+      v.play().catch(() => {})
+    }
+  }, [])
+  return (
+    <video
+      ref={ref}
+      className="absolute inset-0 h-full w-full object-cover"
+      src={src}
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="metadata"
+      style={{ filter: 'saturate(1.1) contrast(1.05)' }}
+    />
+  )
+}
+
 function CanvasPixeles({ colores }: { colores: string[] }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
@@ -78,11 +110,8 @@ export function MosaicBackground() {
                   tipo === 'px-rose' ? ['#ff5da2', '#d94f8f', '#7c3aed'] : ['#f7a927', '#e07b00', '#c96e00']
                 }
               />
-            ) : tipo === 'photo' ? (
-              <div
-                className="absolute inset-0"
-                style={{ background: 'radial-gradient(circle at 60% 45%,#3aa564,#1f7a44 40%,#0c2f1c 85%)' }}
-              />
+            ) : tipo.startsWith('video:') ? (
+              <TileVideo src={tipo.slice(6)} />
             ) : (
               <div
                 className={`absolute ${tipo.includes('bloom') ? 'blur-[2px]' : ''}`}

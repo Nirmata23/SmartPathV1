@@ -49,7 +49,21 @@ O aplica el SQL de `0009_cobros.sql` desde el editor SQL del dashboard y desplie
 
 Edge Functions del proyecto: `crear-colegio`, `canjear-invitacion`,
 `crear-acceso-estudiante`, `resetear-pin`, `otorgar-xp`, `aprobar-pago`,
-`calcular-planilla`.
+`calcular-planilla`, `enviar-push`.
+
+### Web Push (opcional)
+
+Para activar las notificaciones del navegador hay que configurar el par de
+llaves VAPID. La **pública** va en `.env` como `VITE_VAPID_PUBLIC_KEY`; la
+**privada** es un secreto del servidor — nunca en el repo:
+
+```bash
+# genera un par nuevo con:  npx web-push generate-vapid-keys
+supabase secrets set VAPID_PUBLIC_KEY=<publica> VAPID_PRIVATE_KEY=<privada>
+```
+
+Sin estas llaves, la app degrada con elegancia: el botón de campana no aparece
+y `enviar-push` responde 503 sin romper nada.
 
 ## Seguridad (reglas no negociables)
 

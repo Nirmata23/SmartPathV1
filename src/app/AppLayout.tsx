@@ -19,7 +19,9 @@ import {
   Users,
   Wallet,
 } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
+import { usePush } from '../features/push/usePush'
 import { PixelAvatar } from '../components/PixelAvatar'
 import type { Rol } from '../types/db'
 
@@ -137,6 +139,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             {new Date().toLocaleDateString('es-GT', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
           <div className="flex items-center gap-3">
+            <BotonNotificaciones />
             <div className="max-w-[180px] truncate text-right text-sm font-semibold">{perfil.nombre}</div>
             <PixelAvatar seed={perfil.avatar_seed ?? perfil.nombre} codigoPixel={perfil.avatar_pixel} tamano={36} />
           </div>
@@ -144,6 +147,23 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 md:px-8">{children}</main>
       </div>
     </div>
+  )
+}
+
+// Botón para activar notificaciones del navegador (§37.2). Se oculta si el
+// navegador no las soporta o si no hay llaves VAPID configuradas.
+function BotonNotificaciones() {
+  const { estado, activar } = usePush()
+  if (estado === 'no-soportado' || estado === 'activo') return null
+  return (
+    <button
+      onClick={() => activar()}
+      title="Activar notificaciones"
+      className="flex h-9 w-9 items-center justify-center rounded-xl text-muted transition-colors hover:bg-cream-2 hover:text-ink"
+      aria-label="Activar notificaciones"
+    >
+      <Bell className="h-[18px] w-[18px]" />
+    </button>
   )
 }
 

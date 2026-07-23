@@ -114,6 +114,14 @@ export function ComunicadosPage() {
         publicado_por: perfil!.id,
       })
       if (error) throw new Error('No tienes permiso para publicar con ese alcance')
+      // Comunicado urgente → intenta enviar Web Push (best-effort, no bloquea).
+      if (urgente) {
+        supabase.functions
+          .invoke('enviar-push', {
+            body: { titulo: `Urgente: ${titulo.trim()}`, cuerpo: cuerpo.trim().slice(0, 120), url: `/${perfil!.rol}/comunicados` },
+          })
+          .catch(() => {})
+      }
     },
     onSuccess: () => {
       setModalNuevo(false)

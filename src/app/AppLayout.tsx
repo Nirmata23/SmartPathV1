@@ -15,6 +15,7 @@ import {
   School,
   Sparkles,
   Trophy,
+  UserPlus,
   Users,
   Wallet,
 } from 'lucide-react'
@@ -38,6 +39,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/director/academico', etiqueta: 'Académico', Icono: BookOpenCheck },
     { a: '/director/cobros', etiqueta: 'Cobros', Icono: Wallet },
     { a: '/director/planilla', etiqueta: 'Planilla', Icono: Landmark },
+    { a: '/director/admisiones', etiqueta: 'Admisiones', Icono: UserPlus },
     { a: '/director/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/director/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],

@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { FileDown } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../features/auth/AuthProvider'
 import { EncabezadoPagina, EstadoVacio, Tarjeta } from '../AppLayout'
+import { Boton } from '../../components/ui'
+import { generarBoleta } from '../../features/reportes/pdf'
 import { useRealtimeAcademico } from '../../features/realtime/useRealtimeAcademico'
 
 interface Nota {
@@ -21,30 +26,58 @@ interface Promedio {
 // Notas de los hijos (RLS: el padre solo ve las suyas). Con Realtime: cuando el
 // docente guarda una nota, esta vista se refresca sola.
 export function NotasPage() {
+  const { perfil } = useAuth()
   useRealtimeAcademico(['padre-notas'])
+  const [generando, setGenerando] = useState(false)
+  const [errorPdf, setErrorPdf] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['padre-notas'],
     queryFn: async () => {
-      const [notas, promedios, materias] = await Promise.all([
+      const [notas, promedios, materias, evals, colegio, hijos] = await Promise.all([
         supabase
           .from('calificacion')
           .select('id, actividad, nota, creado_en, estudiante:estudiante_id(id, nombre), materia:materia_id(nombre)')
           .order('creado_en', { ascending: false })
           .limit(40),
-        supabase.from('v_promedio_estudiante_materia').select('estudiante_id, materia_id, promedio'),
+        supabase.from('v_promedio_estudiante_materia').select('estudiante_id, materia_id, promedio, evaluaciones'),
         supabase.from('materia').select('id, nombre'),
+        Promise.resolve(null),
+        supabase.from('colegio').select('nombre').eq('id', perfil!.colegio_id).maybeSingle(),
+        supabase.from('estudiante').select('id, nombre'),
       ])
+      void evals
       const nombreMateria = new Map((materias.data ?? []).map((m) => [m.id, m.nombre]))
       return {
         notas: (notas.data ?? []) as unknown as Nota[],
-        promedios: ((promedios.data ?? []) as Promedio[]).map((p) => ({
+        promedios: ((promedios.data ?? []) as (Promedio & { evaluaciones: number })[]).map((p) => ({
           ...p,
           materia: nombreMateria.get(p.materia_id) ?? 'Materia',
         })),
+        colegioNombre: colegio.data?.nombre ?? 'Colegio',
+        hijos: (hijos.data ?? []) as { id: string; nombre: string }[],
       }
     },
   })
+
+  async function descargarBoleta(estudianteId: string, estudianteNombre: string) {
+    setErrorPdf(null)
+    setGenerando(true)
+    try {
+      const materias = (data?.promedios ?? [])
+        .filter((p) => p.estudiante_id === estudianteId)
+        .map((p) => ({ materia: p.materia!, promedio: Number(p.promedio), evaluaciones: p.evaluaciones }))
+      await generarBoleta(
+        { colegioId: perfil!.colegio_id, colegioNombre: data!.colegioNombre, estudianteNombre, emitidoPor: perfil!.id },
+        materias,
+        `Ciclo ${new Date().getFullYear()}`,
+      )
+    } catch (e) {
+      setErrorPdf(e instanceof Error ? e.message : 'No se pudo generar la boleta')
+    } finally {
+      setGenerando(false)
+    }
+  }
 
   if (isLoading) return <div className="h-48 animate-pulse rounded-2xl bg-cream-2" />
 
@@ -54,6 +87,19 @@ export function NotasPage() {
         titulo={<>Notas de tus <em className="text-amber-d italic">hijos</em></>}
         sub="Cada nota llega aquí en el momento en que el docente la guarda."
       />
+
+      {errorPdf && <p className="mb-4 rounded-xl bg-alerta/10 px-4 py-2.5 text-sm text-alerta">{errorPdf}</p>}
+
+      {(data?.hijos ?? []).length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(data?.hijos ?? []).map((h) => (
+            <Boton key={h.id} variante="fantasma" onClick={() => descargarBoleta(h.id, h.nombre)} disabled={generando}>
+              <FileDown className="h-4 w-4" /> Boleta de {h.nombre.split(' ')[0]} (PDF)
+            </Boton>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Tarjeta>
           <div className="mb-4 font-mono text-[11px] tracking-widest text-muted uppercase">Promedios por materia</div>

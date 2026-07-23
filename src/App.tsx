@@ -24,6 +24,7 @@ import { AvatarPage } from './app/estudiante/AvatarPage'
 import { LogrosPage } from './app/estudiante/LogrosPage'
 import { CalendarioPage } from './app/compartido/CalendarioPage'
 import { ComunicadosPage } from './app/compartido/ComunicadosPage'
+import { VerificarPage } from './app/publico/VerificarPage'
 
 function PantallaCarga() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registro" element={<RegistroPage />} />
       <Route path="/codigo" element={<CodigoPage />} />
+      <Route path="/verificar" element={<VerificarPage />} />
 
       <Route path="/director" element={<RequiereRol rol="director"><DirectorHome /></RequiereRol>} />
       <Route path="/director/colegio" element={<RequiereRol rol="director"><ColegioPage /></RequiereRol>} />

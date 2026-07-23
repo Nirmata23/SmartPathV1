@@ -34,8 +34,9 @@ supabase/
 
 ## Aplicar la base de datos (Supabase)
 
-Las migraciones en `supabase/migrations/` van en orden. La 0001–0008 ya están
-aplicadas en el proyecto; **0009_cobros.sql está pendiente de aplicar**. Con el
+Las migraciones en `supabase/migrations/` van en orden y todas (0001–0010) están
+aplicadas en el proyecto. **Pendiente de desplegar: la Edge Function
+`aprobar-pago`** (su tabla ya existe; solo falta subir la función). Con el
 CLI de Supabase:
 
 ```bash

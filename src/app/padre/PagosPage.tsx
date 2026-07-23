@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Banknote, Clock, Receipt } from 'lucide-react'
+import { Banknote, Clock, FileCheck, Receipt } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../features/auth/AuthProvider'
 import { EncabezadoPagina, EstadoVacio, Tarjeta } from '../AppLayout'
 import { Boton, Chip, Etiqueta, Modal, claseInput } from '../../components/ui'
+import { generarSolvencia } from '../../features/reportes/pdf'
 
 interface Cuota {
   id: string
@@ -41,12 +42,14 @@ export function PagosPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['pagos-padre'],
     queryFn: async () => {
-      const [cuotas, estado] = await Promise.all([
+      const [cuotas, estado, colegio, hijos] = await Promise.all([
         supabase
           .from('cuota')
           .select('id, concepto, monto, vence, estado, estudiante:estudiante_id(nombre)')
           .order('vence', { ascending: true, nullsFirst: false }),
         supabase.from('v_estado_cuenta').select('saldo_pendiente, pagado, cuotas_vencidas'),
+        supabase.from('colegio').select('nombre').eq('id', perfil!.colegio_id).maybeSingle(),
+        supabase.from('estudiante').select('id, nombre'),
       ])
       const agg = (estado.data ?? []) as { saldo_pendiente: number | null; pagado: number | null; cuotas_vencidas: number | null }[]
       return {
@@ -54,9 +57,28 @@ export function PagosPage() {
         saldo: agg.reduce((s, r) => s + Number(r.saldo_pendiente ?? 0), 0),
         pagado: agg.reduce((s, r) => s + Number(r.pagado ?? 0), 0),
         vencidas: agg.reduce((s, r) => s + Number(r.cuotas_vencidas ?? 0), 0),
+        colegioNombre: colegio.data?.nombre ?? 'Colegio',
+        hijos: (hijos.data ?? []) as { id: string; nombre: string }[],
       }
     },
   })
+
+  const [generando, setGenerando] = useState(false)
+  async function descargarSolvencia(nombre: string) {
+    setError(null)
+    setGenerando(true)
+    try {
+      await generarSolvencia(
+        { colegioId: perfil!.colegio_id, colegioNombre: data!.colegioNombre, estudianteNombre: nombre, emitidoPor: perfil!.id },
+        data!.saldo,
+        moneda,
+      )
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No se pudo generar la constancia')
+    } finally {
+      setGenerando(false)
+    }
+  }
 
   const registrar = useMutation({
     mutationFn: async () => {
@@ -99,6 +121,17 @@ export function PagosPage() {
       />
 
       {aviso && <p className="mb-4 rounded-xl bg-exito/10 px-4 py-2.5 text-sm font-bold text-exito">{aviso}</p>}
+      {error && !cuotaSel && <p className="mb-4 rounded-xl bg-alerta/10 px-4 py-2.5 text-sm text-alerta">{error}</p>}
+
+      {data.saldo <= 0 && (data.hijos ?? []).length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(data.hijos ?? []).map((h) => (
+            <Boton key={h.id} variante="fantasma" onClick={() => descargarSolvencia(h.nombre)} disabled={generando}>
+              <FileCheck className="h-4 w-4" /> Constancia de solvencia de {h.nombre.split(' ')[0]}
+            </Boton>
+          ))}
+        </div>
+      )}
 
       <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Tarjeta>

@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Lock, Mail, QrCode } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../features/auth/AuthProvider'
 import {
   AuthShell,
   BotonPrimario,
@@ -17,6 +18,7 @@ const DOMINIO_ESTUDIANTE = 'est.smartpath.app'
 
 export function LoginPage() {
   const nav = useNavigate()
+  const { session, perfil } = useAuth()
   const [modo, setModo] = useState<'correo' | 'estudiante'>('correo')
   const [correo, setCorreo] = useState('')
   const [clave, setClave] = useState('')
@@ -24,6 +26,12 @@ export function LoginPage() {
   const [pin, setPin] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [cargando, setCargando] = useState(false)
+
+  // Quien ya tiene sesión abierta va directo a su panel (por ejemplo, al tocar
+  // "Ingresar" desde la portada).
+  useEffect(() => {
+    if (session && perfil) nav(`/${perfil.rol}`, { replace: true })
+  }, [session, perfil, nav])
 
   async function entrar(e: FormEvent) {
     e.preventDefault()

@@ -63,6 +63,25 @@ Cloudflare Pages y Netlify funcionan igual (build `pnpm build`, salida `dist`), 
 necesitan su propia regla de reescritura: en Netlify, un archivo `public/_redirects`
 con `/* /index.html 200`.
 
+## Portada y aplicación
+
+El sitio sirve dos cosas desde el mismo dominio:
+
+| Ruta | Qué es | Archivo |
+| --- | --- | --- |
+| `/` | Portada de marketing (estática) | `public/index.html` |
+| todo lo demás | La aplicación React | `app.html` |
+
+Los nombres importan: en Vercel **el sistema de archivos tiene prioridad sobre las
+reescrituras**, así que si la app se llamara `index.html` se quedaría con la raíz y la
+portada nunca aparecería. Por eso la app vive en `app.html` y la portada ocupa el
+`index.html`. El plugin `smartpath-rutas-app` de `vite.config.ts` reproduce ese mismo
+comportamiento en `pnpm dev`, para que desarrollo y producción se comporten igual.
+
+La portada enlaza a la app: «Ingresar» va a `/login` y los botones de prueba gratis a
+`/registro`. Los botones de contacto de ventas siguen sin destino, porque todavía no
+hay un correo o formulario definido.
+
 ## Estructura
 
 ```

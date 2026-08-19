@@ -3,13 +3,14 @@ import { createClient } from '@supabase/supabase-js'
 const url = import.meta.env.VITE_SUPABASE_URL as string
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-if (!url || !key) {
-  throw new Error(
-    'Faltan VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. Copia .env.example a .env y complétalo.',
-  )
-}
+// Si falta la configuración NO lanzamos al importar: eso dejaría la pantalla en
+// blanco. Marcamos la bandera y la app muestra instrucciones claras (main.tsx).
+export const hayConfiguracion = Boolean(url && key)
 
-export const supabase = createClient(url, key)
+export const supabase = createClient(
+  url || 'https://sin-configurar.supabase.co',
+  key || 'sin-configurar',
+)
 
 export async function invocarFuncion<T>(
   nombre: string,

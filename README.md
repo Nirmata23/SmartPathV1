@@ -18,6 +18,51 @@ cp .env.example .env   # completa URL y clave publicable de tu proyecto Supabase
 pnpm dev
 ```
 
+Si faltan las variables, la app no se queda en blanco: muestra una pantalla con los
+pasos exactos para crear el `.env`.
+
+## Despliegue (Vercel)
+
+El repositorio ya trae `vercel.json` con todo lo necesario. En Vercel:
+
+1. **Add New → Project** e importa `Nirmata23/SmartPathV1`.
+2. En **Branch**, elige `claude/smartpath-school-platform-fc1qbo`.
+3. Framework, build y carpeta de salida se detectan solos (Vite → `dist`).
+4. Agrega las **Environment Variables** —las mismas del `.env`, sin comillas:
+
+   | Nombre | Valor |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | `https://TU-PROYECTO.supabase.co` |
+   | `VITE_SUPABASE_ANON_KEY` | `sb_publishable_...` |
+   | `VITE_VAPID_PUBLIC_KEY` | *(opcional, solo para notificaciones)* |
+
+5. **Deploy**. Al terminar tendrás una URL pública que abre en cualquier navegador o celular.
+
+> Las variables `VITE_*` se incrustan en el bundle **durante la compilación**: si las
+> cambias después, hay que volver a desplegar para que surtan efecto.
+
+Qué resuelve `vercel.json`:
+
+- **Reescritura SPA** — sin ella, abrir directamente `/verificar?c=…` (el enlace del QR)
+  o `/admision?c=…` (el portal de admisiones) devolvería 404. Son justamente los dos
+  enlaces pensados para compartirse fuera de la app.
+- **Caché** — assets con huella digital se cachean un año; el service worker nunca,
+  para que las actualizaciones lleguen enseguida.
+- **Cabeceras de seguridad** — `nosniff`, `Referrer-Policy`, `X-Frame-Options` y
+  `Permissions-Policy` restringiendo cámara, micrófono y ubicación.
+
+### Después del primer despliegue
+
+En Supabase → **Authentication → URL Configuration**, agrega tu dominio de Vercel en
+**Site URL** y en **Redirect URLs**. Sin eso, el enlace de recuperar contraseña
+apuntaría a `localhost`.
+
+### Otros proveedores
+
+Cloudflare Pages y Netlify funcionan igual (build `pnpm build`, salida `dist`), pero
+necesitan su propia regla de reescritura: en Netlify, un archivo `public/_redirects`
+con `/* /index.html 200`.
+
 ## Estructura
 
 ```

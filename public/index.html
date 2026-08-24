@@ -137,7 +137,16 @@ body::after{
 }
 .nav-links a.active{color:var(--amber)}
 .nav-pill.scrolled .nav-links a.active{color:var(--amber)}
-.nav-cta-pill{
+.nav-ingresar{
+      padding:9px 14px;border-radius:99px;
+      font-size:13px;font-weight:600;font-family:var(--fb);
+      text-decoration:none;color:rgba(245,237,224,.72);
+      transition:color .2s,background .2s;white-space:nowrap;
+    }
+    .nav-ingresar:hover{background:rgba(245,237,224,.08);color:rgba(245,237,224,.95)}
+    .nav-pill.scrolled .nav-ingresar{color:var(--muted)}
+    .nav-pill.scrolled .nav-ingresar:hover{background:var(--cream2);color:var(--ink)}
+    .nav-cta-pill{
   padding:9px 18px;border-radius:99px;
   font-size:13px;font-weight:700;font-family:var(--fb);
   background:var(--amber);color:#fff;
@@ -307,7 +316,7 @@ body::after{
 .hstat:hover{background:rgba(245,237,224,.04)}
 .hstat:last-child{border-right:none}
 .hstat-val{font-family:var(--fd);font-size:32px;color:#f5ede0;line-height:1}
-.hstat-lbl{font-size:11px;color:rgba(245,237,224,.35);font-weight:500}
+.hstat-lbl{font-size:12px;color:rgba(245,237,224,.35);font-weight:500}
 /* scroll hint */
 .scroll-hint{
   position:absolute;bottom:200px;left:50%;transform:translateX(-50%);
@@ -661,7 +670,7 @@ body::after{
 }
 .crow-txt{flex:1}
 .crow-lbl{font-size:12px;font-weight:700;color:rgba(245,237,224,.78)}
-.crow-sub{font-size:10px;color:rgba(245,237,224,.3);margin-top:1px}
+.crow-sub{font-size:12px;color:rgba(245,237,224,.3);margin-top:1px}
 .crow-val{font-family:var(--fd);font-size:14px;white-space:nowrap}
 
 /* ══════════════════════════════════════════════════════════
@@ -724,7 +733,7 @@ body::after{
   font-size:14px;font-weight:800;color:#fff;flex-shrink:0;
 }
 .testi-name{font-size:13px;font-weight:700;color:var(--ink)}
-.testi-role{font-size:11px;color:var(--muted);margin-top:2px}
+.testi-role{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* ══════════════════════════════════════════════════════════
    PRICING
@@ -1098,9 +1107,8 @@ footer{background:var(--ink);border-top:1px solid var(--border-d);padding:60px 4
       <li><a href="#cobros">Cobros</a></li>
       <li><a href="#precios">Precios</a></li>
       <li><a href="#faq">FAQ</a></li>
-            <li><a href="/login">Ingresar</a></li>
     </ul>
-    <a href="/registro" class="nav-cta-pill"><i class="bi bi-arrow-right-circle"></i> Prueba gratis</a>
+    <a href="/login" class="nav-ingresar">Ingresar</a> <a href="/registro" class="nav-cta-pill"><i class="bi bi-arrow-right-circle"></i> Prueba gratis</a>
   </div>
 </header>
 

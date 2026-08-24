@@ -74,7 +74,7 @@ body::after{
   position:fixed;top:0;left:0;height:3px;width:0%;z-index:500;
   background:linear-gradient(90deg,var(--amber),var(--amber-l));
   box-shadow:0 0 12px rgba(224,123,0,.5);
-  transition:width .1s linear;
+  transition:transform .1s linear;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -198,7 +198,7 @@ body::after{
   pointer-events:none;
 }
 .hero-content{
-  position:relative;z-index:3;
+  position:relative;z-index:3;will-change:transform,opacity;
   max-width:var(--mw);margin:0 auto;width:100%;
   padding:160px 40px 120px;
   display:flex;flex-direction:column;align-items:center;text-align:center;
@@ -1797,12 +1797,21 @@ const heroVideo=document.getElementById('hero-video');
 
 /* combined scroll handler (single rAF-throttled listener) */
 let ticking=false;
-function onScroll(){
-  const y=window.scrollY;
-  navPill.classList.toggle('scrolled',y>60);
-  const h=document.documentElement.scrollHeight-window.innerHeight;
-  progress.style.width=(h>0?(y/h)*100:0)+'%';
-  if(y<window.innerHeight){
+    /* La altura del documento se mide fuera del scroll: leerla dentro del
+       manejador obligaba al navegador a recalcular el layout en cada frame. */
+    /* Si el sistema pide menos movimiento, no calculamos parallax:
+       ni se anima ni se gasta trabajo en cada frame. */
+    const menosMovimiento=window.matchMedia('(prefers-reduced-motion: reduce)');
+    let alturaScroll=0;
+    function medirAltura(){ alturaScroll=document.documentElement.scrollHeight-window.innerHeight; }
+    medirAltura();
+    window.addEventListener('resize',medirAltura,{passive:true});
+    window.addEventListener('load',medirAltura);
+    function onScroll(){
+      const y=window.scrollY;
+      navPill.classList.toggle('scrolled',y>60);
+      progress.style.transform='scaleX('+(alturaScroll>0?Math.min(1,y/alturaScroll):0)+')';
+  if(!menosMovimiento.matches && y<window.innerHeight){
     const p=y/window.innerHeight; // 0 → 1 across the hero
     heroContent.style.transform='translateY('+(y*0.25)+'px)';
     heroContent.style.opacity=Math.max(0,1-y/(window.innerHeight*0.85));

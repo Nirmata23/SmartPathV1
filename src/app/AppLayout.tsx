@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   BookMarked,
   BookOpenCheck,
+  BookText,
   CalendarCheck2,
   CalendarDays,
   ClipboardList,
@@ -52,6 +53,7 @@ const NAV: Record<Rol, ItemNav[]> = {
     { a: '/docente/asistencia', etiqueta: 'Asistencia', Icono: CalendarCheck2 },
     { a: '/docente/calificaciones', etiqueta: 'Calificaciones', Icono: ClipboardList },
     { a: '/docente/agenda', etiqueta: 'Agenda', Icono: BookMarked },
+    { a: '/docente/planificador', etiqueta: 'Planificador', Icono: BookText },
     { a: '/docente/calendario', etiqueta: 'Calendario', Icono: CalendarDays },
     { a: '/docente/comunicados', etiqueta: 'Comunicados', Icono: Megaphone },
   ],

@@ -17,6 +17,7 @@ import { AdmisionPage } from './app/publico/AdmisionPage'
 import { DocenteHome } from './app/docente/DocenteHome'
 import { AsistenciaPage } from './app/docente/AsistenciaPage'
 import { CalificacionesPage } from './app/docente/CalificacionesPage'
+import { PlanificadorPage } from './app/docente/PlanificadorPage'
 import { PadreHome } from './app/padre/PadreHome'
 import { NotasPage } from './app/padre/NotasPage'
 import { AsistenciaHijosPage } from './app/padre/AsistenciaHijosPage'
@@ -84,6 +85,7 @@ export default function App() {
       <Route path="/docente" element={<RequiereRol rol="docente"><DocenteHome /></RequiereRol>} />
       <Route path="/docente/asistencia" element={<RequiereRol rol="docente"><AsistenciaPage /></RequiereRol>} />
       <Route path="/docente/calificaciones" element={<RequiereRol rol="docente"><CalificacionesPage /></RequiereRol>} />
+      <Route path="/docente/planificador" element={<RequiereRol rol="docente"><PlanificadorPage /></RequiereRol>} />
 
       <Route path="/padre" element={<RequiereRol rol="padre"><PadreHome /></RequiereRol>} />
       <Route path="/padre/notas" element={<RequiereRol rol="padre"><NotasPage /></RequiereRol>} />
